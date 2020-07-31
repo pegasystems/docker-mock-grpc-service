@@ -1,0 +1,24 @@
+services:
+  - docker
+language: java
+jdk: oraclejdk8
+os: linux
+dist: trusty
+env:
+  global:
+    - IMAGE_NAME=pegasystems/mock-grpc-service
+    - VERSION=0.0.1
+script:
+  - ./gradlew installDist
+  - docker build -t $IMAGE_NAME .
+  - docker images
+before_deploy:
+  - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
+  - docker tag $IMAGE_NAME:latest $IMAGE_NAME:$VERSION
+deploy:
+  provider: script
+  script: docker push $IMAGE_NAME:$VERSION
+  on:
+    repo: pegasystems/docker-mock-grpc-service
+    all_branches: true
+    condition: "$TRAVIS_BRANCH =~ ^(v.+|master)$"
