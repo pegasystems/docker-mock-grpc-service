@@ -6,6 +6,7 @@ import com.pega.grpc.grpctest.HttpReq;
 import com.pega.grpc.grpctest.HttpRes;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.services.HealthStatusManager;
 import io.grpc.stub.StreamObserver;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class GRPCServer {
     public GRPCServer(ServerBuilder<?> serverBuilder, int port) {
         this.port = port;
         server = serverBuilder.addService(new GRPCTestService())
+                .addService(new HealthStatusManager().getHealthService())
                 .build();
     }
 
