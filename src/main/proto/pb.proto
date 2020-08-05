@@ -1,0 +1,22 @@
+
+syntax = "proto3";
+
+option go_package = "grpctests/pega/grpc/grpctest";
+option java_multiple_files = true;
+option java_package = "com.pega.grpc.grpctest";
+option java_outer_classname = "GRPCProto";
+
+package grpctest;
+
+// Interface exported by the server.
+service GRPCTest {
+  rpc GetPodName(HttpReq) returns (HttpRes) {}
+
+}
+
+message HttpReq {
+}
+
+message HttpRes {
+  string podname = 1;
+}
