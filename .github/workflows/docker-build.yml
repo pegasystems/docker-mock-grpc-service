@@ -1,0 +1,31 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+env:
+  IMAGE_NAME: pegasystems/mock-grpc-service:0.0.1
+
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the library
+        run: ./gradlew installDist
+      - name: Build the Docker image
+        run: docker build -t $IMAGE_NAME .
+      - name: Login To Docker Hub
+        if: ${{ github.ref == 'refs/heads/master' && github.repository == 'pegasystems/docker-mock-grpc-service' }}
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Push to DockerHub
+        if: ${{ github.ref == 'refs/heads/master' && github.repository == 'pegasystems/docker-mock-grpc-service' }}
+        run: docker push $IMAGE_NAME
+
